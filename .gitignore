@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# Build / dependency directories (none required for this plugin but reserved)
+node_modules/
+vendor/
+
+# Logs
+*.log
