@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SGE Mega Menu
  * Description: Portable mega-menu engine — renders WP nav menus as a hover-driven mega panel with 3-level or 4-level layouts, simple dropdowns, and plain links. Drop-in for any theme.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: SGE
  * Requires PHP: 7.4
  * Text Domain: sge-mega-menu
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'SGE_MM_VERSION', '1.2.0' );
+define( 'SGE_MM_VERSION', '1.2.1' );
 define( 'SGE_MM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SGE_MM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SGE_MM_OPTION', 'sge_mm_settings' );
