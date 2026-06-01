@@ -16,6 +16,7 @@ A portable WordPress mega-menu engine. Renders any WP nav menu as a hover-driven
   - **General tab** — master enable/disable toggle, default mega menu source, auto-replace menu/location picker, shortcode reference
   - **Styles tab** — CodeMirror CSS editor with syntax highlighting, line numbers, auto-indent, and a click-to-copy reference panel of common selectors
 - **Duplicate menu** action — clone any WP nav menu (items + parent/child hierarchy) with one click. Surfaces in two places: a `Duplicate` button next to *Save Menu* / *Delete Menu* on **Appearance → Menus**, and a per-menu `Duplicate` button on **SGE Mega Menu → General**. The new menu is auto-named `<Original> (Copy)` (suffixed `(Copy 2)`, `(Copy 3)`… on collision) and starts unassigned to any theme location.
+- **Duplicate menu item branch** — expand any item in **Appearance → Menus** and click `Duplicate item (with descendants)` to clone that single item plus every child, grandchild, and deeper descendant beneath it. The branch root is inserted as a top-level item in the same menu by default; use the programmatic API to nest it under a different parent or push it into another menu entirely.
 - **Custom CSS** entered in the Styles tab is auto-marked `!important` on output so user overrides always win the cascade — no need to think about specificity. Existing `!important` declarations are preserved (no doubling).
 - **Self-contained**: when auto-replace is OFF and no shortcode is on the page, **nothing** from the plugin loads on the front-end. Custom CSS only ships when the menu CSS itself ships.
 
@@ -95,6 +96,23 @@ add_filter( 'sge_mm_replace_locations', function ( $locs ) {
     $locs[] = 'primary';
     return $locs;
 } );
+```
+
+## Developer API — programmatic duplication
+
+```php
+// Duplicate item 123 (and all descendants) inside the same menu, as a top-level branch:
+$result = sge_mm_duplicate_menu_item_branch( $source_menu_id = 47, $source_item_id = 123 );
+
+// Duplicate item 123 from menu 47 into menu 52 as a top-level branch:
+$result = sge_mm_duplicate_menu_item_branch( 47, 123, $target_menu_id = 52 );
+
+// Duplicate item 123 from menu 47 into menu 52, nested under item 900 in menu 52:
+$result = sge_mm_duplicate_menu_item_branch( 47, 123, 52, $target_parent_item_id = 900 );
+
+// $result is either:
+//   array{ menu_id: int, new_root_id: int, items_copied: int, items_in_branch: int }
+// or a WP_Error on failure.
 ```
 
 ## File structure
