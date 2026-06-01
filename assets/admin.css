@@ -211,6 +211,11 @@
   pointer-events: none;
   filter: grayscale(40%);
 }
+/* Row actions (Duplicate) stay clickable even when auto-replace is off — duplicating
+ * a menu is independent of replacement state. */
+.sge-mm-conditional[data-disabled="1"] .sge-mm-row-action {
+  pointer-events: auto;
+}
 
 /* Field grid */
 .sge-mm-grid {
@@ -266,6 +271,40 @@
   color: #646970;
   background: transparent;
   padding: 0;
+}
+
+/* Row wrapper: checkbox label + inline row action (Duplicate). */
+.sge-mm-checkgroup__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sge-mm-checkgroup__row .sge-mm-checkgroup__item { flex: 1; min-width: 0; }
+.sge-mm-row-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2271b1;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.sge-mm-row-action:hover,
+.sge-mm-row-action:focus {
+  background: #f0f6fc;
+  border-color: #2271b1;
+  color: #135e96;
+}
+.sge-mm-row-action .dashicons {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
 }
 
 /* Shortcode block */

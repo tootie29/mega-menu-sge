@@ -291,14 +291,25 @@ function sge_mm_render_general_tab( $s ) {
 				<?php if ( $all_menus ) : ?>
 					<div class="sge-mm-checkgroup">
 						<?php foreach ( $all_menus as $m ) :
-							$checked = in_array( $m->name, (array) $s['replace_menus'], true );
-							$count   = $m->count;
+							$checked    = in_array( $m->name, (array) $s['replace_menus'], true );
+							$count      = $m->count;
+							$dup_url    = function_exists( 'sge_mm_duplicate_url' ) ? sge_mm_duplicate_url( $m->term_id ) : '';
+							$confirm_js = sprintf(
+								/* translators: %s: menu name */
+								__( 'Duplicate the menu "%s"? A new menu will be created with the same items.', 'sge-mega-menu' ),
+								$m->name
+							);
 							?>
-							<label class="sge-mm-checkgroup__item">
-								<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[replace_menus][]" value="<?php echo esc_attr( $m->name ); ?>" <?php checked( $checked ); ?> />
-								<span><?php echo esc_html( $m->name ); ?></span>
-								<code><?php echo (int) $count; ?> items</code>
-							</label>
+							<div class="sge-mm-checkgroup__row">
+								<label class="sge-mm-checkgroup__item">
+									<input type="checkbox" name="<?php echo esc_attr( $opt_name ); ?>[replace_menus][]" value="<?php echo esc_attr( $m->name ); ?>" <?php checked( $checked ); ?> />
+									<span><?php echo esc_html( $m->name ); ?></span>
+									<code><?php echo (int) $count; ?> items</code>
+								</label>
+								<?php if ( $dup_url ) : ?>
+									<a href="<?php echo esc_url( $dup_url ); ?>" class="sge-mm-row-action" onclick="return confirm(<?php echo esc_attr( wp_json_encode( $confirm_js ) ); ?>);"><span class="dashicons dashicons-admin-page"></span> <?php esc_html_e( 'Duplicate', 'sge-mega-menu' ); ?></a>
+								<?php endif; ?>
+							</div>
 						<?php endforeach; ?>
 					</div>
 				<?php else : ?>

@@ -15,6 +15,7 @@ A portable WordPress mega-menu engine. Renders any WP nav menu as a hover-driven
 - **Admin settings page** (Top-level menu in WP Admin):
   - **General tab** — master enable/disable toggle, default mega menu source, auto-replace menu/location picker, shortcode reference
   - **Styles tab** — CodeMirror CSS editor with syntax highlighting, line numbers, auto-indent, and a click-to-copy reference panel of common selectors
+- **Duplicate menu** action — clone any WP nav menu (items + parent/child hierarchy) with one click. Surfaces in two places: a `Duplicate` button next to *Save Menu* / *Delete Menu* on **Appearance → Menus**, and a per-menu `Duplicate` button on **SGE Mega Menu → General**. The new menu is auto-named `<Original> (Copy)` (suffixed `(Copy 2)`, `(Copy 3)`… on collision) and starts unassigned to any theme location.
 - **Custom CSS** entered in the Styles tab is auto-marked `!important` on output so user overrides always win the cascade — no need to think about specificity. Existing `!important` declarations are preserved (no doubling).
 - **Self-contained**: when auto-replace is OFF and no shortcode is on the page, **nothing** from the plugin loads on the front-end. Custom CSS only ships when the menu CSS itself ships.
 
@@ -103,7 +104,8 @@ sge-mega-menu/
 ├── sge-mega-menu.php       # Plugin header, settings access, nav location, asset register, auto-replace, shortcode, custom CSS auto-!important
 ├── includes/
 │   ├── renderer.php        # asla_render_mega_menu() + helpers (4-level / 3-level / dropdown / plain link)
-│   └── admin.php           # Top-level admin page, two tabs, Settings API, CodeMirror integration
+│   ├── admin.php           # Top-level admin page, two tabs, Settings API, CodeMirror integration
+│   └── duplicate.php       # Duplicate-menu handler (admin-post action) + nav-menus.php / plugin-admin link injection
 ├── assets/
 │   ├── mega-menu.css       # All scoped under .asla-mm; @media (min-width: 992px) for desktop
 │   ├── mega-menu.js        # ASLAMega hover/tab/side-tab interaction (vanilla JS, no jQuery)
