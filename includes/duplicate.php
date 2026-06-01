@@ -79,26 +79,67 @@ function sge_mm_handle_duplicate_menu() {
 			error_log( '[SGE Mega Menu] Duplicate returned WP_Error for menu ' . $menu_id . ': ' . $err_msg );
 		}
 		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'nav-menus.php' );
-		wp_safe_redirect( add_query_arg(
-			array(
-				'sge_mm_dup' => 'err',
-				'sge_mm_msg' => rawurlencode( $err_msg !== '' ? $err_msg : __( 'Unknown error.', 'sge-mega-menu' ) ),
+		sge_mm_redirect_safely(
+			add_query_arg(
+				array(
+					'sge_mm_dup' => 'err',
+					'sge_mm_msg' => rawurlencode( $err_msg !== '' ? $err_msg : __( 'Unknown error.', 'sge-mega-menu' ) ),
+				),
+				$back
 			),
-			$back
-		) );
+			__( 'Failed to duplicate menu', 'sge-mega-menu' )
+		);
 		exit;
 	}
 
 	// Success: drop the user onto the new menu in the editor.
-	wp_safe_redirect( add_query_arg(
-		array(
-			'action'     => 'edit',
-			'menu'       => (int) $new_id,
-			'sge_mm_dup' => '1',
+	sge_mm_redirect_safely(
+		add_query_arg(
+			array(
+				'action'     => 'edit',
+				'menu'       => (int) $new_id,
+				'sge_mm_dup' => '1',
+			),
+			admin_url( 'nav-menus.php' )
 		),
-		admin_url( 'nav-menus.php' )
-	) );
+		__( 'Menu duplicated', 'sge-mega-menu' )
+	);
 	exit;
+}
+
+/**
+ * Try HTTP redirect; if anything fatals or headers are already sent, fall back
+ * to a JS/meta-refresh page with a manual link. Some host stacks (WPML +
+ * WP Rocket + aggressive output filters) throw inside `wp_safe_redirect()` or
+ * one of its filters — we don't want that to 500 a duplicate that already
+ * succeeded.
+ *
+ * @param string $url   Destination URL.
+ * @param string $title Page title for the fallback HTML page.
+ */
+function sge_mm_redirect_safely( $url, $title = 'Redirecting' ) {
+	$url = (string) $url;
+	try {
+		if ( ! headers_sent() ) {
+			wp_safe_redirect( $url );
+			return;
+		}
+	} catch ( \Throwable $e ) {
+		error_log( '[SGE Mega Menu] wp_safe_redirect threw: ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine() );
+		// fall through to printed page
+	}
+
+	$url_attr = esc_url( $url );
+	$url_js   = wp_json_encode( $url );
+	$title_e  = esc_html( $title );
+	echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' . $title_e . '</title>'
+		. '<meta http-equiv="refresh" content="0;url=' . $url_attr . '">'
+		. '<style>body{font:14px -apple-system,system-ui,sans-serif;padding:40px;color:#1d2327}a{color:#2271b1}</style>'
+		. '</head><body>'
+		. '<h2>' . $title_e . '</h2>'
+		. '<p>If you are not redirected automatically, <a href="' . $url_attr . '">click here to continue</a>.</p>'
+		. '<script>setTimeout(function(){ try { location.href = ' . $url_js . '; } catch(e){} }, 50);</script>'
+		. '</body></html>';
 }
 add_action( 'admin_post_sge_mm_duplicate_menu', 'sge_mm_handle_duplicate_menu' );
 
