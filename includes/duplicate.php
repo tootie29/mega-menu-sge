@@ -54,14 +54,35 @@ function sge_mm_handle_duplicate_menu() {
 		wp_die( esc_html__( 'Source menu not found.', 'sge-mega-menu' ), '', array( 'response' => 404 ) );
 	}
 
-	$new_id = sge_mm_duplicate_menu_object( $source );
+	// Wrap in try/catch so a fatal inside another plugin's filter (e.g. WPML
+	// hooks firing on wp_update_nav_menu_item) becomes a friendly redirect with
+	// the message instead of a blank 500. Also extends PHP's time/memory limits
+	// since large menus iterate many wp_update_nav_menu_item() calls which each
+	// trigger every plugin's hooks.
+	@set_time_limit( 120 );
+	if ( function_exists( 'wp_raise_memory_limit' ) ) {
+		wp_raise_memory_limit( 'admin' );
+	}
 
-	if ( is_wp_error( $new_id ) ) {
+	$err_msg = '';
+	$new_id  = null;
+	try {
+		$new_id = sge_mm_duplicate_menu_object( $source );
+	} catch ( \Throwable $e ) {
+		$err_msg = $e->getMessage();
+		error_log( '[SGE Mega Menu] Duplicate failed for menu ' . $menu_id . ': ' . $err_msg . ' @ ' . $e->getFile() . ':' . $e->getLine() );
+	}
+
+	if ( $err_msg !== '' || is_wp_error( $new_id ) ) {
+		if ( is_wp_error( $new_id ) ) {
+			$err_msg = $new_id->get_error_message();
+			error_log( '[SGE Mega Menu] Duplicate returned WP_Error for menu ' . $menu_id . ': ' . $err_msg );
+		}
 		$back = wp_get_referer() ? wp_get_referer() : admin_url( 'nav-menus.php' );
 		wp_safe_redirect( add_query_arg(
 			array(
 				'sge_mm_dup' => 'err',
-				'sge_mm_msg' => rawurlencode( $new_id->get_error_message() ),
+				'sge_mm_msg' => rawurlencode( $err_msg !== '' ? $err_msg : __( 'Unknown error.', 'sge-mega-menu' ) ),
 			),
 			$back
 		) );
