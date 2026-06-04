@@ -5,14 +5,21 @@
  */
 
 /* Default-active states are server-rendered; keep panel hidden until hover/focus. */
-.asla-mm .asla-mega__panel { display: none; }
+.asla-mm .asla-mega__panel {
+  display: none;
+}
 
 @media (min-width: 992px) {
+
   /* Hide the hamburger in our desktop range (theme only hides it at 1200+). */
-  .asla-mm .header-center .menu-button { display: none; }
+  .asla-mm .header-center .menu-button {
+    display: none;
+  }
 
   /* Anchor for the absolute-positioned panel — must come from a header-level ancestor. */
-  .asla-mm .header-container { position: relative; }
+  .asla-mm .header-container {
+    position: relative;
+  }
 
   /* Reset .SiteMenu container so our flex nav can lay out properly. */
   .asla-mm .primary-nav .SiteMenu {
@@ -34,14 +41,16 @@
     list-style: none;
     font-family: "Lato", Arial, sans-serif;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item {
     display: inline-flex;
     position: static;
     width: auto;
     padding: 0;
     margin: 0;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item > a {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item>a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -52,32 +61,56 @@
     color: #fff;
     text-decoration: none;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item > a:hover,
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item > a:focus { color: #fff; }
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item>a:hover,
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item>a:focus {
+    color: #fff;
+  }
 
   /* Replicate the theme's `min-width:1200px` header layout rules from 992px upward,
    * so the mega-menu page keeps the Figma layout across the entire desktop range
    * (theme defaults at <1200px push nav to the right with order:3 and hide book-appointment). */
-  .asla-mm .header-container .container { justify-content: space-between; }
-  .asla-mm .header-container .logo-wrap { margin-right: unset; }
-  .asla-mm .header-container .header-center { display: inherit; order: unset; }
-  .asla-mm .header-container .header-center nav .menu { width: unset; margin: 0; }
+  .asla-mm .header-container .container {
+    justify-content: space-between;
+  }
+
+  .asla-mm .header-container .logo-wrap {
+    margin-right: unset;
+  }
+
+  .asla-mm .header-container .header-center {
+    display: inherit;
+    order: unset;
+  }
+
+  .asla-mm .header-container .header-center nav .menu {
+    width: unset;
+    margin: 0;
+  }
 
   /* Force visibility on chrome that the theme hides at <1200px. */
-  .asla-mm .header-container .container a.book-appointment { display: inline-flex; }
-  .asla-mm .header-container .parent-mega-menu .parent-sub-menu { display: revert; }
+  .asla-mm .header-container .container a.book-appointment {
+    display: inline-flex;
+  }
+
+  .asla-mm .header-container .parent-mega-menu .parent-sub-menu {
+    display: revert;
+  }
+
   .asla-mm .asla-mega__caret {
-    width: 0; height: 0;
+    width: 0;
+    height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-top: 5px solid currentColor;
   }
 
   /* Simple dropdown (top item with children but no `has-mega` class). */
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item--has-dropdown {
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item--has-dropdown {
     position: relative;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item--has-dropdown > ul.asla-mega-nav__dropdown {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item--has-dropdown>ul.asla-mega-nav__dropdown {
     display: none;
     position: absolute;
     top: 100%;
@@ -85,24 +118,29 @@
     transform: translateX(-50%);
     z-index: 1000;
     min-width: 220px;
+    width: -webkit-max-content;
+    width: -moz-max-content;
     width: max-content;
     margin: 0;
     padding: 8px 0;
     list-style: none;
     background: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item--has-dropdown:hover > ul.asla-mega-nav__dropdown,
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav > li.asla-mega-nav__item--has-dropdown:focus-within > ul.asla-mega-nav__dropdown {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item--has-dropdown:hover>ul.asla-mega-nav__dropdown,
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav>li.asla-mega-nav__item--has-dropdown:focus-within>ul.asla-mega-nav__dropdown {
     display: block;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown > li {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown>li {
     display: block;
     width: auto;
     margin: 0;
     padding: 0;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown > li > a {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown>li>a {
     display: block;
     padding: 10px 24px;
     font-size: 16px;
@@ -113,7 +151,8 @@
     text-transform: none;
     white-space: nowrap;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown > li > a:hover {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega-nav__dropdown>li>a:hover {
     background: #f7f7f7;
     color: #ff7c7c;
   }
@@ -124,6 +163,7 @@
   .asla-mm .asla-mega__panel.is-open {
     display: block;
   }
+
   .asla-mm .asla-mega__panel {
     position: absolute;
     left: 0;
@@ -132,8 +172,9 @@
     z-index: 1000;
     width: 100%;
     background: #f2f2f2;
-    box-shadow: -2px 5px 5px rgba(0,0,0,0.04);
+    box-shadow: -2px 5px 5px rgba(0, 0, 0, 0.04);
   }
+
   .asla-mm .asla-mega__inner {
     width: 100%;
     margin: 0;
@@ -150,14 +191,16 @@
     list-style: none;
     background: #ebebeb;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs > li {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs>li {
     display: inline-flex;
     flex: 0 0 auto;
     width: auto;
     margin: 0;
     padding: 0;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs > li > a.asla-mega__tab {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs>li>a.asla-mega__tab {
     display: inline-flex;
     align-items: center;
     padding: clamp(14px, 1.6vw, 20px) clamp(18px, 2.5vw, 32px);
@@ -170,14 +213,45 @@
     text-decoration: none;
     white-space: nowrap;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs > li > a.asla-mega__tab.is-active {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__tabs>li>a.asla-mega__tab.is-active {
     background: #ff7c7c;
     color: #fff;
   }
 
   /* Tab bodies — only the active one is laid out as flex (rail + content). */
-  .asla-mm .asla-mega__body { display: none; }
-  .asla-mm .asla-mega__body.is-active { display: flex; }
+  .asla-mm .asla-mega__body {
+    display: none;
+  }
+
+  .asla-mm .asla-mega__body.is-active {
+    display: flex;
+    align-items: stretch;
+    max-height: 400px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #fff;
+    scrollbar-width: thin;
+    scrollbar-color: #ff7c7c #f2f2f2;
+  }
+
+  .asla-mm .asla-mega__body.is-active::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .asla-mm .asla-mega__body.is-active::-webkit-scrollbar-track {
+    background: #f2f2f2;
+    border-radius: 4px;
+  }
+
+  .asla-mm .asla-mega__body.is-active::-webkit-scrollbar-thumb {
+    background: #ff7c7c;
+    border-radius: 4px;
+  }
+
+  .asla-mm .asla-mega__body.is-active::-webkit-scrollbar-thumb:hover {
+    background: #ff6262;
+  }
 
   /* Left rail (side-tabs) — fluid width with a sensible min/max so it works from 992px up. */
   .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs {
@@ -191,31 +265,35 @@
     list-style: none;
     background: #fff;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs > li {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs>li {
     display: block;
     width: auto;
     margin: 0;
     padding: 0;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs > li > a.asla-mega__sidetab {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs>li>a.asla-mega__sidetab {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
     padding: clamp(10px, 1vw, 12px) clamp(18px, 2vw, 26px);
-    font-size: clamp(14px, 1vw, 16px);
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 400;
     color: #404040;
     background: #fff;
     border-radius: 200px;
     text-decoration: none;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs > li > a.asla-mega__sidetab.is-active {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs>li>a.asla-mega__sidetab.is-active {
     background: #ff7c7c;
     color: #fff;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs > li > a.asla-mega__sidetab--label {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__sidetabs>li>a.asla-mega__sidetab--label {
     padding: 12px 26px;
     font-weight: 600;
     font-size: 18px;
@@ -226,23 +304,33 @@
     border-bottom: 1px solid #eee;
     pointer-events: none;
   }
+
   .asla-mm .asla-mega__arrow {
-    width: 14px; height: 14px;
+    width: 14px;
+    height: 14px;
     flex: 0 0 14px;
     background: currentColor;
     -webkit-mask: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
-            mask: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
+    mask: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2' d='M9 6l6 6-6 6'/%3E%3C/svg%3E");
   }
 
   /* Right content + headings + responsive item list (auto-collapses to 1 col below ~520px). */
   .asla-mm .asla-mega__content {
     flex: 1 1 auto;
-    min-width: 0; /* allows flex item to shrink past content's intrinsic width */
+    min-width: 0;
+    /* allows flex item to shrink past content's intrinsic width */
     background: #fff;
     padding: clamp(14px, 1.6vw, 20px) clamp(20px, 3.5vw, 50px) clamp(20px, 2.5vw, 30px) clamp(20px, 2.8vw, 40px);
   }
-  .asla-mm .asla-mega__group { display: none; }
-  .asla-mm .asla-mega__group.is-active { display: block; }
+
+  .asla-mm .asla-mega__group {
+    display: none;
+  }
+
+  .asla-mm .asla-mega__group.is-active {
+    display: block;
+  }
+
   .asla-mm .asla-mega__heading {
     margin: 0 0 12px;
     padding: 0 16px 12px;
@@ -252,32 +340,42 @@
     color: #000;
     border-bottom: 1px solid #eee;
   }
+
   .asla-mm .primary-nav .SiteMenu ul.asla-mega__items {
     width: 100%;
     margin: 0;
     padding: 0;
     list-style: none;
     /* column-width: 2 columns when content area > ~440px, 1 column below. */
+    -moz-column-width: 220px;
     column-width: 220px;
+    -moz-column-count: 2;
     column-count: 2;
+    -moz-column-gap: clamp(12px, 1.5vw, 20px);
     column-gap: clamp(12px, 1.5vw, 20px);
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items > li {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items>li {
     display: block;
     width: auto;
     margin: 0;
     padding: 0;
+    -moz-column-break-inside: avoid;
     break-inside: avoid;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items > li > a {
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items>li>a {
     display: block;
     padding: clamp(6px, 0.7vw, 8px) clamp(10px, 1.5vw, 16px);
-    font-size: clamp(14px, 1vw, 16px);
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 24px;
     font-weight: 400;
     color: #404040;
     text-decoration: none;
     text-transform: capitalize;
   }
-  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items > li > a:hover { color: #ff7c7c; }
+
+  .asla-mm .primary-nav .SiteMenu ul.asla-mega__items>li>a:hover {
+    color: #ff7c7c;
+  }
 }
