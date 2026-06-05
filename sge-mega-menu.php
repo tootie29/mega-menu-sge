@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SGE Mega Menu
  * Description: Portable mega-menu engine — renders WP nav menus as a hover-driven mega panel with 3-level or 4-level layouts, simple dropdowns, and plain links. Drop-in for any theme.
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: SGE
  * Requires PHP: 7.4
  * Text Domain: sge-mega-menu
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'SGE_MM_VERSION', '1.2.3' );
+define( 'SGE_MM_VERSION', '1.2.4' );
 define( 'SGE_MM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SGE_MM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SGE_MM_OPTION', 'sge_mm_settings' );
@@ -105,6 +105,16 @@ require_once SGE_MM_DIR . 'includes/renderer.php';
  * wp_nav_menu args to force the original output for a specific call.
  * --------------------------------------------------------------------------*/
 
+/** Does the call look like a mobile drawer (metismenu / #side-menu pattern)? */
+function sge_mm_is_drawer_call( $args ) {
+	// $args may be an object (pre_wp_nav_menu) or array (wp_nav_menu_args) — accept both.
+	$mc = is_object( $args ) ? ( isset( $args->menu_class ) ? $args->menu_class : '' ) : ( isset( $args['menu_class'] ) ? $args['menu_class'] : '' );
+	$ci = is_object( $args ) ? ( isset( $args->container_id ) ? $args->container_id : '' ) : ( isset( $args['container_id'] ) ? $args['container_id'] : '' );
+	if ( ! empty( $mc ) && false !== strpos( (string) $mc, 'metismenu' ) ) { return true; }
+	if ( ! empty( $ci ) && 'side-menu' === $ci ) { return true; }
+	return false;
+}
+
 /** Should this wp_nav_menu() call be replaced with our mega menu? */
 function sge_mm_should_replace( $args ) {
 	if ( ! empty( $args->bypass_sge_mm ) ) { return false; }
@@ -114,8 +124,7 @@ function sge_mm_should_replace( $args ) {
 	if ( empty( $s['auto_replace_enabled'] ) ) { return false; }
 
 	// Skip drawer/metismenu calls so the mobile drawer isn't replaced.
-	if ( ! empty( $args->menu_class ) && false !== strpos( (string) $args->menu_class, 'metismenu' ) ) { return false; }
-	if ( ! empty( $args->container_id ) && 'side-menu' === $args->container_id ) { return false; }
+	if ( sge_mm_is_drawer_call( $args ) ) { return false; }
 
 	$names     = (array) apply_filters( 'sge_mm_replace_menus',     $s['replace_menus'] );
 	$locations = (array) apply_filters( 'sge_mm_replace_locations', $s['replace_locations'] );
@@ -128,6 +137,47 @@ function sge_mm_should_replace( $args ) {
 	}
 	return false;
 }
+
+/** Swap the menu source on drawer calls (metismenu / #side-menu) to the plugin's configured
+ * default source whenever auto-replace is active and the drawer's current menu/location is
+ * in the replace list. The drawer's container_id, menu_class, items_wrap, walker, etc. are
+ * preserved untouched so the legacy mobile drawer markup and CSS keep working — only the
+ * items rendered inside change to match the desktop mega menu's source. This means a single
+ * edit to the configured source menu flows to BOTH desktop (via short-circuit) AND the
+ * drawer (via this filter) without requiring theme edits. */
+function sge_mm_swap_drawer_source( $args ) {
+	if ( ! empty( $args['bypass_sge_mm'] ) ) { return $args; }
+	if ( ! sge_mm_auto_replace_is_active() )  { return $args; }
+	if ( ! sge_mm_is_drawer_call( $args ) )   { return $args; }
+
+	$s         = sge_mm_get_settings();
+	$names     = (array) apply_filters( 'sge_mm_replace_menus',     $s['replace_menus'] );
+	$locations = (array) apply_filters( 'sge_mm_replace_locations', $s['replace_locations'] );
+
+	$name = '';
+	if ( ! empty( $args['menu'] ) ) {
+		$name = is_object( $args['menu'] ) && isset( $args['menu']->name )
+			? $args['menu']->name
+			: (string) $args['menu'];
+	}
+	$matches_name = $name !== '' && in_array( $name, $names, true );
+	$matches_loc  = ! empty( $args['theme_location'] ) && in_array( $args['theme_location'], $locations, true );
+	if ( ! $matches_name && ! $matches_loc ) { return $args; }
+
+	$source = sge_mm_get_default_source();
+	if ( ! empty( $source['menu_id'] ) ) {
+		$args['menu']           = (int) $source['menu_id'];
+		$args['theme_location'] = '';
+	} elseif ( ! empty( $source['menu'] ) ) {
+		$args['menu']           = $source['menu'];
+		$args['theme_location'] = '';
+	} elseif ( ! empty( $source['location'] ) ) {
+		$args['menu']           = '';
+		$args['theme_location'] = $source['location'];
+	}
+	return $args;
+}
+add_filter( 'wp_nav_menu_args', 'sge_mm_swap_drawer_source' );
 
 /** Short-circuit wp_nav_menu() with our mega menu output when the call targets a replaced menu.
  *
