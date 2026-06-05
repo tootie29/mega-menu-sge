@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SGE Mega Menu
  * Description: Portable mega-menu engine — renders WP nav menus as a hover-driven mega panel with 3-level or 4-level layouts, simple dropdowns, and plain links. Drop-in for any theme.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: SGE
  * Requires PHP: 7.4
  * Text Domain: sge-mega-menu
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'SGE_MM_VERSION', '1.2.1' );
+define( 'SGE_MM_VERSION', '1.2.2' );
 define( 'SGE_MM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SGE_MM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SGE_MM_OPTION', 'sge_mm_settings' );
@@ -129,13 +129,32 @@ function sge_mm_should_replace( $args ) {
 	return false;
 }
 
-/** Short-circuit wp_nav_menu() with our mega menu output when the call targets a replaced menu. */
+/** Short-circuit wp_nav_menu() with our mega menu output when the call targets a replaced menu.
+ *
+ * Emits BOTH the mega-menu HTML (wrapped in .sge-mm-desktop, visible >=992px) and the
+ * theme's original wp_nav_menu output (wrapped in .sge-mm-mobile, visible <992px). This
+ * preserves the legacy mobile-menu / drawer styling on themes that reuse the same menu
+ * shortcode for desktop and mobile (e.g. header-new.php's `<nav class="mobile-menu">`).
+ * The original output is generated via a recursive wp_nav_menu() call with bypass_sge_mm
+ * set, which makes sge_mm_should_replace() short-circuit and lets core produce the
+ * untouched markup. */
 function sge_mm_short_circuit_nav_menu( $output, $args ) {
 	if ( null !== $output ) { return $output; } // someone else already short-circuited
 	if ( ! sge_mm_should_replace( $args ) ) { return $output; }
+
+	$orig_args                     = (array) $args;
+	$orig_args['bypass_sge_mm']    = true;
+	$orig_args['echo']             = false;
+	$original_html                 = wp_nav_menu( $orig_args );
+	if ( ! is_string( $original_html ) ) { $original_html = ''; }
+
 	ob_start();
+	echo '<div class="sge-mm-desktop">';
 	asla_render_mega_menu();
+	echo '</div>';
+	echo '<div class="sge-mm-mobile">' . $original_html . '</div>';
 	$html = ob_get_clean();
+
 	// Respect the echo flag — pre_wp_nav_menu output isn't echoed by core, so honour it manually.
 	if ( ! empty( $args->echo ) ) { echo $html; return ''; }
 	return $html;

@@ -9,7 +9,34 @@
   display: none;
 }
 
+/* Hide the mega-nav by default so its desktop top-bar items don't leak on mobile;
+ * the in-media-query rule below re-enables it for .primary-nav .SiteMenu on >=992px. */
+.asla-mm .asla-mega-nav {
+  display: none;
+}
+
+/* Responsive wrappers emitted by the auto-replace short-circuit (sge_mm_short_circuit_nav_menu):
+ * the mega menu hides below 992px and the original wp_nav_menu output stands in so themes that
+ * reuse the same menu shortcode for desktop and mobile (e.g. <nav class="mobile-menu">[listmenu])
+ * keep their legacy mobile design. */
+.asla-mm .sge-mm-desktop {
+  display: none;
+}
+
+.asla-mm .sge-mm-mobile {
+  display: block;
+}
+
 @media (min-width: 992px) {
+
+  .asla-mm .sge-mm-desktop {
+    display: block;
+  }
+
+  .asla-mm .sge-mm-mobile {
+    display: none;
+  }
+
 
   /* Hide the hamburger in our desktop range (theme only hides it at 1200+). */
   .asla-mm .header-center .menu-button {
@@ -209,7 +236,7 @@
     text-transform: uppercase;
     color: #000;
     background: #EBEBEB;
-    border: 2px solid #fff;
+    border: 1px solid #fff;
     text-decoration: none;
     white-space: nowrap;
   }
@@ -229,6 +256,7 @@
     align-items: stretch;
     max-height: 400px;
     overflow-y: auto;
+    -ms-scroll-chaining: none;
     overscroll-behavior: contain;
     background: #fff;
     scrollbar-width: thin;
