@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SGE Mega Menu
  * Description: Portable mega-menu engine — renders WP nav menus as a hover-driven mega panel with 3-level or 4-level layouts, simple dropdowns, and plain links. Drop-in for any theme.
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: SGE
  * Requires PHP: 7.4
  * Text Domain: sge-mega-menu
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'SGE_MM_VERSION', '1.2.4' );
+define( 'SGE_MM_VERSION', '1.2.5' );
 define( 'SGE_MM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SGE_MM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SGE_MM_OPTION', 'sge_mm_settings' );
@@ -254,16 +254,15 @@ function sge_mm_body_class( $classes ) {
 }
 add_filter( 'body_class', 'sge_mm_body_class' );
 
-/** Strip legacy *_dermatology classes from any nav menu output when auto-replace is on.
+/** Strip legacy *_dermatology classes from any nav menu output.
  * Background: assurance_skin's custom.js has a dd=0/lis.length>0 infinite loop that fires
  * when `.SiteMenu .col_grid.medical_dermatology li.menu-item` doesn't exist (length=0 → dd=0)
- * but `.medical_dermatology ul li` does exist somewhere in the DOM. Once we replace the
- * desktop nav (which had those classes), any remaining drawer output that still carries them
- * triggers the bug. Renaming the classes here keeps the drawer visually intact (those classes
- * were styling hooks for the now-replaced desktop nav) and dodges the loop without touching
- * the theme. Scoped to auto-replace-active sites so unaffected sites stay untouched. */
+ * but `.medical_dermatology ul li` does exist somewhere in the DOM (e.g. the slide-out drawer).
+ * The bug triggers whether replacement happens via auto-replace or via direct theme calls to
+ * asla_render_mega_menu(), so this runs unconditionally on every wp_nav_menu output. The
+ * renamed classes (`-derm-mm`) don't match any theme CSS selector, so this is purely a JS-loop
+ * dodge and is safe to apply always. */
 function sge_mm_strip_legacy_classes( $nav_html ) {
-	if ( ! sge_mm_auto_replace_is_active() ) { return $nav_html; }
 	return preg_replace( '/\b(medical|surgical|aesthetic)_dermatology\b/i', '$1-derm-mm', $nav_html );
 }
 add_filter( 'wp_nav_menu', 'sge_mm_strip_legacy_classes', 99 );
