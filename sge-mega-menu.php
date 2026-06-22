@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SGE Mega Menu
  * Description: Portable mega-menu engine — renders WP nav menus as a hover-driven mega panel with 3-level or 4-level layouts, simple dropdowns, and plain links. Drop-in for any theme.
- * Version: 1.2.5
+ * Version: 1.2.6
  * Author: SGE
  * Requires PHP: 7.4
  * Text Domain: sge-mega-menu
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'SGE_MM_VERSION', '1.2.5' );
+define( 'SGE_MM_VERSION', '1.2.6' );
 define( 'SGE_MM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SGE_MM_URL', plugin_dir_url( __FILE__ ) );
 define( 'SGE_MM_OPTION', 'sge_mm_settings' );
@@ -227,7 +227,7 @@ function sge_mm_short_circuit_nav_menu( $output, $args ) {
 }
 add_filter( 'pre_wp_nav_menu', 'sge_mm_short_circuit_nav_menu', 10, 2 );
 
-/** When auto-replace is active anywhere, ensure assets are enqueued site-wide and `.asla-mm` is on body. */
+/** Is auto-replace configured (setting on AND at least one menu/location selected). */
 function sge_mm_auto_replace_is_active() {
 	static $cached = null;
 	if ( null !== $cached ) { return $cached; }
@@ -239,15 +239,22 @@ function sge_mm_auto_replace_is_active() {
 	return $cached;
 }
 
+/** Enqueue mega menu CSS/JS site-wide. Active whenever the plugin is loaded so manual
+ * theme integrations (asla_render_mega_menu() called directly) get styles + scripts too;
+ * filter `sge_mm_force_assets` to override (return false to opt out on specific pages). */
 function sge_mm_auto_enqueue() {
-	if ( ! sge_mm_auto_replace_is_active() ) { return; }
+	if ( ! apply_filters( 'sge_mm_force_assets', true ) ) { return; }
 	if ( wp_style_is( 'asla-mega-menu', 'registered' ) )  { wp_enqueue_style( 'asla-mega-menu' ); }
 	if ( wp_script_is( 'asla-mega-menu', 'registered' ) ) { wp_enqueue_script( 'asla-mega-menu' ); }
 }
 add_action( 'wp_enqueue_scripts', 'sge_mm_auto_enqueue', 20 );
 
+/** Add `.asla-mm` to body unconditionally. The mega menu CSS is scoped under this class,
+ * so pages that don't render `.asla-mega-nav` are visually unaffected. Filter
+ * `sge_mm_force_body_class` to opt out. */
 function sge_mm_body_class( $classes ) {
-	if ( sge_mm_auto_replace_is_active() && ! in_array( 'asla-mm', $classes, true ) ) {
+	if ( ! apply_filters( 'sge_mm_force_body_class', true ) ) { return $classes; }
+	if ( ! in_array( 'asla-mm', $classes, true ) ) {
 		$classes[] = 'asla-mm';
 	}
 	return $classes;
